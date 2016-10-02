@@ -4,15 +4,25 @@ public class Player {
 
 	private long Gen_Time;
 	private long Last_Time;
-	private String Name;
+	public String Name;
+	public String Password;
 	
-	public Player(String Name_) {
+	public Player(String Name_, String Password_) {
 		Name = Name_;
+		Password = Password_;
 	}
 
+	@Override
 	public boolean equals(Object other){
-		Player oplayer = (Player)other;
-		return (Name == oplayer.Name);
+		if (other instanceof Player) {
+			Player oplayer = (Player)other;
+			return (Name.equals(oplayer.Name));
+		}
+		return super.equals(other);
+	}
+	
+	public boolean Is_Match(String password) {
+		return password.equals(Password);
 	}
 	
 	public Player Set_Time(long Time_) {

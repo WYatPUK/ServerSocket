@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -26,8 +25,6 @@ public class Window implements ActionListener{
 	private static SocketManager mSocketManager;
 	private static Game_Server gameServer;
 	private static boolean Change_Socket_State_Flag;
-	
-	public static ArrayList<Socket> socketList = new ArrayList<Socket>();
 	
 	private static Socket s;
 	
@@ -74,6 +71,7 @@ public class Window implements ActionListener{
 				continue;
 			}
 			s = mSocketManager.accept(); //stay here
+			long first_Time = System.currentTimeMillis();
 			Println("Success to accept a socket");
 			OutputStream os = s.getOutputStream();
 			InputStream is = s.getInputStream();
@@ -82,23 +80,23 @@ public class Window implements ActionListener{
 				String msg = new String(buffer, 0, Len, "UTF-8");
 				Println("Success to input message: " + msg);
 				String re = gameServer.handle_Message(msg);
-				os.write(("Return:" + re + ' ' + "At:" + System.currentTimeMillis()).getBytes("utf-8"));
+				Println("Output message: " + re);
+				Println(gameServer.Info());
+				os.write((re/* + ' ' + "At:" + System.currentTimeMillis()*/).getBytes("utf-8"));
 			}
 			else {
 				Println("Failed to input message.");
 				os.write("Failed".getBytes("utf-8"));
 			}
-			//br.close();
 			is.close();
-			os.close();
+			os.close(); 
 			s.close();
+			long last_Time = System.currentTimeMillis();
+			Println("Time(ms):" + (last_Time-first_Time));
 		}
 		
 	}
-
-	/**
-	 * Create the application.
-	 */
+	
 	public Window() {
 		initialize();
 	}
