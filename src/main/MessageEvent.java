@@ -19,4 +19,12 @@ public class MessageEvent {
 		From_Index = messageEvent.From_Index;
 	}
 	
+	public String Wy_ToString() {
+		String str = "";
+		str += "From:" + From_Index;
+		str += "&Knowledge:" + Knowledge;
+		str += "&Say:" + Say;
+		return str;
+	}
+	
 }

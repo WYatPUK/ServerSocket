@@ -13,6 +13,7 @@ import java.net.Socket;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
@@ -61,6 +62,9 @@ public class Window implements ActionListener{
 		btnSocket.setEnabled(true); //release the button
 		lblSocket.setText("Socket has been opened");
 		Println("Open ServerSocket succeed");
+		JOptionPane.showMessageDialog(null, "Open ServerSocket succeed", "Hello",JOptionPane.WARNING_MESSAGE);
+		String msg = "";
+		String re = "";
 		while (true) {
 			if (Change_Socket_State_Flag) {
 				Change_Socket_State();
@@ -72,16 +76,18 @@ public class Window implements ActionListener{
 			}
 			s = mSocketManager.accept(); //stay here
 			long first_Time = System.currentTimeMillis();
-			Println("Success to accept a socket");
+			//Println("Success to accept a socket");
 			OutputStream os = s.getOutputStream();
 			InputStream is = s.getInputStream();
 			int Len = is.read(buffer);
 			if (Len != -1) {
-				String msg = new String(buffer, 0, Len, "UTF-8");
-				Println("Success to input message: " + msg);
-				String re = gameServer.handle_Message(msg);
-				Println("Output message: " + re);
-				Println(gameServer.Info());
+				msg = new String(buffer, 0, Len, "UTF-8");
+				re = gameServer.handle_Message(msg);
+				if (!msg.startsWith("Refresh:From:") || !re.equals("Nothing to Refresh")) {
+					Println("Success to input message: " + msg);
+					Println("Output message: " + re);
+				}
+				//Println(gameServer.Info());
 				os.write((re/* + ' ' + "At:" + System.currentTimeMillis()*/).getBytes("utf-8"));
 			}
 			else {
@@ -92,7 +98,10 @@ public class Window implements ActionListener{
 			os.close(); 
 			s.close();
 			long last_Time = System.currentTimeMillis();
-			Println("Time(ms):" + (last_Time-first_Time));
+			if (!msg.startsWith("Refresh:From:") || !re.equals("Nothing to Refresh")) {
+				Println("Time(ms):" + (last_Time-first_Time));
+			}
+			
 		}
 		
 	}
